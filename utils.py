@@ -3,6 +3,9 @@ from bs4 import BeautifulSoup
 
 
 def scrap_a_book(url):
+    """
+    " Scrap all the information of one book
+    """
     # TODO:try/catch
     page = requests.get(url)
     soup = BeautifulSoup(page.content, 'html.parser')
@@ -22,7 +25,11 @@ def scrap_a_book(url):
 
 
 def scrap_books_list(url, category_url):
+    """
+    " Scrap the URL of all books of a category
+    """
     # TODO: try/catch
+    # TODO: if multiple pages (.../cat/page-2.html)
     page = requests.get(url + category_url)
     soup = BeautifulSoup(page.content, 'html.parser')
     book_list_raw = soup.find_all('h3')
@@ -30,10 +37,13 @@ def scrap_books_list(url, category_url):
 
 
 def scrap_categories_list(url):
+    """
+    " Scrap the URL of all the categories of the site
+    """
     # TODO: try/catch
     page = requests.get(url)
     soup = BeautifulSoup(page.content, 'html.parser')
     categories_list_raw = soup.find(class_='nav').find_all('a')
     # On supprime la première catégorie qui contient toutes les autres catégories
     del categories_list_raw[0]
-    return [category['href'] for category in categories_list_raw]
+    return [(category['href'], category.text.strip()) for category in categories_list_raw]
