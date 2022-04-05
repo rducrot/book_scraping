@@ -2,12 +2,12 @@ import requests
 from bs4 import BeautifulSoup
 
 
-def scrap_a_book(url):
+def scrap_a_book(url, book_url):
     """
-    " Scrap all the information of one book
+    " Return a dictionary of the information of one book
     """
-    # TODO:try/catch
-    page = requests.get(url)
+    # TODO:try/except
+    page = requests.get(url + book_url)
     soup = BeautifulSoup(page.content, 'html.parser')
 
     return {
@@ -20,29 +20,29 @@ def scrap_a_book(url):
         'product_description': soup.find_all('p')[3].text,
         'category': soup.find_all('a')[3].text,
         'review_rating': soup.find_all('p')[2]['class'][1],
-        'image_url': soup.img['src'].replace('../..', url)
+        'image_url': soup.img['src'].replace('../../', url)
     }
 
 
 def scrap_books_list(url, category_url):
     """
-    " Scrap the URL of all books of a category
+    " Return a list of the URL of all books of a category
     """
-    # TODO: try/catch
+    # TODO: try/except
     page = requests.get(url + category_url)
     soup = BeautifulSoup(page.content, 'html.parser')
     book_list_raw = soup.find_all('h3')
-    return [book.a['href'].replace('../../../', url + 'catalogue/') for book in book_list_raw]
+    return [book.a['href'].replace('../../../', 'catalogue/') for book in book_list_raw]
 
 
 def scrap_categories_list(url):
     """
-    " Scrap the URL of all the categories of the site
+    " Return a list of tuples of the URL and the title of all categories of the site
     """
-    # TODO: try/catch
+    # TODO: try/except
     page = requests.get(url)
     soup = BeautifulSoup(page.content, 'html.parser')
     categories_list_raw = soup.find(class_='nav').find_all('a')
-    # On supprime la première catégorie qui contient toutes les autres catégories
+    # Delete the first category as it contains all others categories
     del categories_list_raw[0]
     return [(category['href'], category.text.strip()) for category in categories_list_raw]
