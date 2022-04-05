@@ -29,7 +29,6 @@ def scrap_books_list(url, category_url):
     " Scrap the URL of all books of a category
     """
     # TODO: try/catch
-    # TODO: if multiple pages (.../cat/page-2.html)
     page = requests.get(url + category_url)
     soup = BeautifulSoup(page.content, 'html.parser')
     book_list_raw = soup.find_all('h3')
