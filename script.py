@@ -1,6 +1,6 @@
-from utils import *
 import shutil
 import csv
+from utils import *
 
 url = 'http://books.toscrape.com/'
 images = []
@@ -9,19 +9,19 @@ categories = scrap_categories_list(url)
 #categories = [('catalogue/category/books/paranormal_24/index.html', 'Paranormal')]
 
 for category_url, category_name in categories:
-    # TODO: if multiple pages (.../cat/page-2.html)
     books_url_list = scrap_books_list(url, category_url)
 
-    with open('books/' + category_name.lower() + ".csv", 'w') as file:
-        # TODO : Rewrite using CSV module
-        # TODO : Add heading
+    with open('books/' + category_name.lower() + ".csv", 'w', newline='') as file:
+        fieldnames = ['universal_product_code', 'title',
+                      'price_including_tax', 'price_excluding_tax',
+                      'number_available', 'product_description',
+                      'category', 'review_rating', 'image_url']
+        writer = csv.DictWriter(file, delimiter=';', fieldnames=fieldnames)
+        writer.writeheader()
         for book_url in books_url_list:
-            row = ''
             book = scrap_a_book(url, book_url)
             images.append((book['title'], book['image_url']))
-            for key, value in book.items():
-                row += value + ';'
-            file.write(row + '\n')
+            writer.writerow(book)
 
 for image_title, image_url in images:
     image = requests.get(image_url, stream=True)
