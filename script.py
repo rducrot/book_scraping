@@ -5,7 +5,7 @@ from utils import *
 images = []
 
 categories = scrap_categories_list()
-# categories = [('catalogue/category/books/paranormal_24/index.html', 'Paranormal')]
+#categories = [('catalogue/category/books/paranormal_24/index.html', 'Paranormal')]
 
 for category_url, category_name in categories:
     books_url_list = scrap_books_list(category_url)

@@ -1,5 +1,6 @@
 import requests
 from bs4 import BeautifulSoup
+import logging
 from constants import *
 
 
@@ -7,7 +8,10 @@ def scrap_a_book(book_url):
     """
     " Return a dictionary of the information of one book
     """
-    # TODO:try/except
+    try:
+        requests.get(URL + book_url)
+    except requests.exceptions.ConnectionError:
+        logging.error('No connection to the website')
     page = requests.get(URL + book_url)
     soup = BeautifulSoup(page.content, 'html.parser')
 
@@ -16,7 +20,6 @@ def scrap_a_book(book_url):
         FIELDNAMES[1]: soup.h1.text.replace('/','_'),
         FIELDNAMES[2]: soup.find_all('td')[3].text,
         FIELDNAMES[3]: soup.find_all('td')[2].text,
-        # TODO:number_available in int + if 0
         FIELDNAMES[4]: soup.find_all('td')[5].text,
         FIELDNAMES[5]: soup.find_all('p')[3].text,
         FIELDNAMES[6]: soup.find_all('a')[3].text,
@@ -29,7 +32,10 @@ def scrap_books_list(category_url):
     """
     " Return a list of the URL of all books of a category
     """
-    # TODO: try/except
+    try:
+        requests.get(URL + category_url)
+    except requests.exceptions.ConnectionError:
+        logging.error('No connection to the website')
     page = requests.get(URL + category_url)
     soup = BeautifulSoup(page.content, 'html.parser')
 
@@ -54,7 +60,10 @@ def scrap_categories_list():
     """
     " Return a list of tuples of the URL and the title of all categories of the site
     """
-    # TODO: try/except
+    try:
+        requests.get(URL)
+    except requests.exceptions.ConnectionError:
+        logging.error('No connection to the website')
     page = requests.get(URL)
     soup = BeautifulSoup(page.content, 'html.parser')
     categories_list_raw = soup.find(class_='nav').find_all('a')
