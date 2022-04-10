@@ -11,20 +11,20 @@ def scrap_a_book(book_url):
     try:
         requests.get(URL + book_url)
     except requests.exceptions.ConnectionError:
-        logging.error('No connection to the website')
+        logging.error(CONNECTION_ERROR_MESSAGE)
     page = requests.get(URL + book_url)
     soup = BeautifulSoup(page.content, 'html.parser')
 
     return {
-        FIELDNAMES[0]: soup.find_all('td')[0].text,
-        FIELDNAMES[1]: soup.h1.text.replace('/','_'),
-        FIELDNAMES[2]: soup.find_all('td')[3].text,
-        FIELDNAMES[3]: soup.find_all('td')[2].text,
-        FIELDNAMES[4]: soup.find_all('td')[5].text,
-        FIELDNAMES[5]: soup.find_all('p')[3].text,
-        FIELDNAMES[6]: soup.find_all('a')[3].text,
-        FIELDNAMES[7]: soup.find_all('p')[2]['class'][1].replace(';', ','),
-        FIELDNAMES[8]: soup.img['src'].replace('../../', URL)
+        FIELDNAMES[PRODUCT_CODE_LABEL]: soup.find_all('td')[0].text,
+        FIELDNAMES[TITLE_LABEL]: soup.h1.text.replace('/', '_'),
+        FIELDNAMES[PRICE_INCL_TAX_LABEL]: soup.find_all('td')[3].text,
+        FIELDNAMES[PRICE_EXCL_TAX_LABEL]: soup.find_all('td')[2].text,
+        FIELDNAMES[STOCK_LABEL]: soup.find_all('td')[5].text,
+        FIELDNAMES[DESCRIPTION_LABEL]: soup.find_all('p')[3].text,
+        FIELDNAMES[CATEGORY_LABEL]: soup.find_all('a')[3].text,
+        FIELDNAMES[RATING_LABEL]: soup.find_all('p')[2]['class'][1].replace(';', ','),
+        FIELDNAMES[IMAGE_URL_LABEL]: soup.img['src'].replace('../../', URL)
     }
 
 
@@ -35,7 +35,7 @@ def scrap_books_list(category_url):
     try:
         requests.get(URL + category_url)
     except requests.exceptions.ConnectionError:
-        logging.error('No connection to the website')
+        logging.error(CONNECTION_ERROR_MESSAGE)
     page = requests.get(URL + category_url)
     soup = BeautifulSoup(page.content, 'html.parser')
 
@@ -52,7 +52,6 @@ def scrap_books_list(category_url):
 
     book_list_raw = soup.find_all('h3')
 
-    print([book.a['href'].replace('../../../', 'catalogue/') for book in book_list_raw])
     return [book.a['href'].replace('../../../', 'catalogue/') for book in book_list_raw]
 
 
@@ -63,10 +62,12 @@ def scrap_categories_list():
     try:
         requests.get(URL)
     except requests.exceptions.ConnectionError:
-        logging.error('No connection to the website')
+        logging.error(CONNECTION_ERROR_MESSAGE)
+
     page = requests.get(URL)
     soup = BeautifulSoup(page.content, 'html.parser')
     categories_list_raw = soup.find(class_='nav').find_all('a')
     # Delete the first category as it contains all others categories
     del categories_list_raw[0]
+
     return [(category['href'], category.text.strip()) for category in categories_list_raw]
