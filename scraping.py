@@ -21,9 +21,9 @@ def scrap_a_book(book_url):
         FIELDNAMES[PRICE_INCL_TAX_LABEL]: soup.find_all('td')[3].text,
         FIELDNAMES[PRICE_EXCL_TAX_LABEL]: soup.find_all('td')[2].text,
         FIELDNAMES[STOCK_LABEL]: soup.find_all('td')[5].text,
-        FIELDNAMES[DESCRIPTION_LABEL]: soup.find_all('p')[3].text,
+        FIELDNAMES[DESCRIPTION_LABEL]: soup.find_all('p')[3].text.replace(';', ','),
         FIELDNAMES[CATEGORY_LABEL]: soup.find_all('a')[3].text,
-        FIELDNAMES[RATING_LABEL]: soup.find_all('p')[2]['class'][1].replace(';', ','),
+        FIELDNAMES[RATING_LABEL]: soup.find_all('p')[2]['class'][1],
         FIELDNAMES[IMAGE_URL_LABEL]: soup.img['src'].replace('../../', URL)
     }
 
